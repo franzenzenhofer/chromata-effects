@@ -2,6 +2,6 @@
 <img id="testimage" src="img/Lenna.png">
 <script>
 var imageElement = document.querySelector('#testimage');
-var chromata = new Chromata(imageElement);
-chromata.start();
+var chromata = new Chromata(imageElement, {obtrusive:true, lineMode:"rectangle", lineWidth:10});
+console.log(chromata.start());
 </script>

@@ -14,6 +14,7 @@ export default class Chromata {
             dimensions,
             ready = false;
 
+        console.log(options)
         this.options = this._mergeOptions(options);
 
         image.src = imageElement.src;
@@ -42,6 +43,7 @@ export default class Chromata {
         this.sourceImageElement = imageElement;
         this.sourceContext = sourceContext;
         this.renderContext = renderContext;
+        this.renderCanvas = renderCanvas;
         this.isRunning = false;
         this.iterationCount = 0;
     }
@@ -60,6 +62,7 @@ export default class Chromata {
                 this._tick();
             }
         });
+        return this.renderCanvas;
     }
 
     /**
@@ -113,15 +116,22 @@ export default class Chromata {
             outputSize: 'original',
             pathFinderCount: 30,
             speed: 7,
-            turningAngle: Math.PI
+            turningAngle: Math.PI,
+            obtrusive: true
         };
 
-        var merged = {};
+        //stupid object clone hack
+        var merged = (JSON.parse(JSON.stringify(defaults)));
 
-        for(var prop in defaults) {
+        /*for(var prop in defaults) {
             if (defaults.hasOwnProperty(prop)) {
                 merged[prop] = options[prop] || defaults[prop];
             }
+        }*/
+
+        //now also supports cloning of values that are flase
+        for (var key in options) {
+          merged[key] = options[key];
         }
 
         // some validation
@@ -130,7 +140,7 @@ export default class Chromata {
         merged.lineWidth =  this._limitToRange(merged.lineWidth, 1, 100);
         merged.speed =  this._limitToRange(merged.speed, 1, 100);
         merged.turningAngle =  this._limitToRange(merged.turningAngle, 0.1, 10);
-
+        //debugger;
         return merged;
     }
 
@@ -172,8 +182,12 @@ export default class Chromata {
                 lineMode: this.options.lineMode,
                 speed: this.options.speed
             };
-
-        this._appendRenderCanvas();
+        console.log('in run');
+        console.log(this.options);
+        if(this.options.obtrusive === true)
+        {
+          this._appendRenderCanvas();
+        }
 
         this.renderContext.globalCompositeOperation = this.options.compositeOperation;
 

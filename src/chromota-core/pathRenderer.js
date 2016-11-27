@@ -15,7 +15,11 @@ export default class PathRenderer {
             this._drawLineSmooth();
         } else if (this.options.lineMode === 'square') {
             this._drawLineSquare();
-        } else {
+        }
+        else if (this.options.lineMode === 'rectangle') {
+                this._drawRectangle();
+            }
+        else {
             this._drawPoint();
         }
     }
@@ -114,6 +118,26 @@ export default class PathRenderer {
                 this.context.fillStyle = this._getStrokeColor(nextPoint[2]);
                 this.context.fill();
 
+                this.currentPoint = nextPoint;
+            }
+        }
+    }
+
+    _drawRectangle() {
+        var lineLength,
+            nextPoint = this.pathFinder.getNextPoint(this.context);
+
+        if(nextPoint) {
+
+            if (typeof this.currentPoint === 'undefined') {
+                this.currentPoint = nextPoint;
+            }
+
+            lineLength = this._getLineLength(this.currentPoint, nextPoint);
+
+            if (lineLength >= this.options.speed * 2) {
+                this.context.fillStyle = this._getStrokeColor(nextPoint[2]);
+                this.context.fillRect(nextPoint[0]-this.options.lineWidth/2,nextPoint[1]-this.options.lineWidth/2,this.options.lineWidth,this.options.lineWidth)
                 this.currentPoint = nextPoint;
             }
         }
